@@ -1,0 +1,77 @@
+{% extends 'BaseUI/BaseFacility/baseDevice.html' %}
+{% load staticfiles %}
+{% load static %}
+
+{% block title %}Data Sensor Chart{% endblock %}
+
+{% block data-content %}
+<div style="text-align: center">
+    <!-- <canvas id="temChart" width="700" height="300"></canvas> -->
+    <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+    <div style="width: 25%;float:left">
+        <center><label>{{ dataEnc.dateGet }}</label></center>
+    </div>
+    <!-- <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script> -->
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        // var ctx = document.getElementById("temChart");
+        // var dataPoints = [];
+        // var json = $.getJSON("../../json/temperature.json");
+        // console.log(json);
+        // var json = JSON.parse(data);
+        // alert(json[0].label + " " + json[0].time + "h: " + json[0].tem);
+        // alert(json[1].label + " " + json[1].time + "h: " + json[1].tem);
+    </script>
+    <script>
+    window.onload = function(){
+        var dataPoints = [];
+        var loc = 0;
+        var id = {{sensorID}};
+        var chart;
+        // console.log(id)
+        var url = "http://192.168.0.106:8000/devices/json/tem_data/" + "?&sensorID=" + id + "&loc=" + loc;
+        console.log(url)
+        $.getJSON(url, function(data){
+            $.each(data, function(key,value){
+                // console.log(value)
+                dataPoints.push({
+                    x: new Date(value[0], value[1], value[2], value[3], value[4]), 
+                    y: parseFloat(value[5])
+                });
+                loc++;
+                // console.log(dataPoints)
+            });
+            chart = new CanvasJS.Chart("chartContainer", {
+                title:{
+                    text: "Data of " + id
+                },
+                data: [{
+                    type: "line",
+                    color: "red",
+                    dataPoints: dataPoints,
+                }]
+            });
+            chart.render();
+            updateChart();
+        });
+        function updateChart(){
+            url = "http://192.168.0.106:8000/devices/" + id + "/json/tem_data/" + "?&loc=" + loc;
+            console.log(url)
+            $.getJSON(url, function(data){
+                $.each(data, function(key, value){
+                    dataPoints.push({
+                        x: new Date(value[0], value[1], value[2], value[3], value[4]),
+                        y: parseFloat(value[5])
+                    });
+                    loc++;
+                });
+                chart.render();
+                setTimeout(function(){updateChart();}, 5000);
+            });
+        }
+    }
+    </script>
+</div>
+{% endblock %}

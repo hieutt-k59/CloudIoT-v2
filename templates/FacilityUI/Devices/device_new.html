@@ -1,0 +1,74 @@
+{% extends 'BaseUI/BaseFacility/baseEquipment.html' %}
+
+<!--------------- BLOCK MENU ------------->
+{% block listeq %}{% url 'equipmentDisplay' facilityID %}{% endblock %}
+{#{% block neweq %}{% url 'equipmentNew'  %}{% endblock %}#}
+{% block backfaci %}{% url 'facilitiesDisplay' facilityID  %}{% endblock %}
+{% block devices %}{% url 'devices' facilityID %}{% endblock %}
+{% block newdevices %}{% url 'newdevices' facilityID  %}{% endblock %}
+<!--------------- END BLOCK -------------->
+
+{% block data-content %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="input-data">
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border"><b>Device Information</b></legend>
+
+                <div class="row">
+                    <div class="col-md-4">Device Name:<span style="color: red">*</span></div>
+                    <div class="col-md-8"><input type="text" class="form-control" name="devicename" placeholder="Input device name here!" value="{{ data.devicename }}" required></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">UUID:<span style="color: red">*</span></div>
+                    <div class="col-md-8"><input type="text" name="uuid" class="form-control" value="{{ data.uuid }}" placeholder="Input UUDI here!" required></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">Device Type:<span style="color: red">*</span></div>
+                    <div class="col-md-8">
+                        <select class="form-control" name="devicetype" >
+                            <option value="" disabled selected>Please select device type..</option>
+                            {% for a in listtype %}
+                                {% if a.device_type_name ==  data.device_type_name %}
+                                <option selected>{{ a.device_type_name }}</option>
+                                {% else %}
+                                <option>{{ a.device_type_name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+
+
+                <div class="row">
+                    <div class="col-md-4">Created_time:<span style="color: red">*</span></div>
+                    <div class="col-md-8">
+                        <input type="datetime-local" name="creattime" class="form-control" id="creattime" value="{{ data.creattime }}" placeholder="yyyy-mm-dd" >
+                    </div>
+{#                    <script>#}
+{#                        $( "#commissiondate" ).datepicker({#}
+{#                            dateFormat: 'yy-mm-dd'#}
+{#                        });#}
+{#                        $("#commissiondate").datepicker('setDate', new Date());#}
+{#                    </script>#}
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">Description:</div>
+                    <div class="col-md-8">
+                        <textarea type="text"  class="form-control"  name="decription" placeholder="Write device description here!"></textarea>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="row"></div>
+            <div class="row">
+                <div class="col-md-12" style="text-align: right"><button type="submit" class="btn btn-primary">Submit</button></div>
+            </div>
+
+        </div>
+    </form>
+{% endblock %}
