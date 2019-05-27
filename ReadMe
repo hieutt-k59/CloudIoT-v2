@@ -1,0 +1,33 @@
+----------------------------------------------------------------------
+-----                   PLEASE READ ME FIRST                     -----
+----------------------------------------------------------------------
+
+1. Read file ReadMe.txt in /cloud/process/ for RBI development.
+2. Read file ReadMe.txt in /database/ for using Database.
+3. Read file ReadMe.txt in /templates/ for WebUI designer.
+
+----------------------------------------------------------------------
+
+1. For developer:
+    - step 1: install python 3x.
+    - step 2: restored database.
+    - step 3: open project.
+    - step 4: install library using: pip install -r requirements.txt
+    - step 5: config settings.py file
+
+2. For deployment:
+    - pythonanywhere.com: https://help.pythonanywhere.com/pages/DeployExistingDjangoProject/
+    - windows server : http://blog.mattwoodward.com/2016/07/running-django-application-on-windows.html
+
+-----------------------------------------------------------------------
+ If you have any question please contact me:
+* Facebook: facebook.com/nguyenanh.vu.330/
+* Email: anhvu01011994@gmail.com
+-----------------------------------------------------------------------
+
+3. About collecting data module:
+    - Cloud can subcribe mqtt broker. To subcribe broker, need paho-mqtt pakage.
+    - Cloud use MongoDB to store data.
+    - If device was declare with cloud, it is got a $UUID, that help device is allowed store data by cloud.
+    - $UUID is contained in topic of received message. The form of topic: data/$UUID
+    - The form of message is json form: {"device":"device_name", "type":type_of_value, "value":value, "timestamp":timestamp}
