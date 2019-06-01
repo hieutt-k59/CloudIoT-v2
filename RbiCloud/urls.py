@@ -114,11 +114,11 @@ urlpatterns = [
     path('proposalCitizen/<int:proposalID>/chart/', views.RiskChartCitizen, name='riskChartCitizen'),
     path('proposalCitizen/<int:proposalID>/fully-consequence/',views.FullyConsequenceCitizen, name='fullyConsequenceCitizen'),
     #####################Devices#####################
-    path('devices/display/<int:facilityID>/',views.devices, name='devices'),
-    path('newdevices/<int:facilityID>/new/', views.new_device, name = 'newdevice'),
+    path('device/display/<int:facilityID>/',views.devices, name='devices'),
+    path('new_device/<int:facilityID>/new/', views.new_device, name = 'newdevice'),
     path('devices/<slug:device_name>/json/tem_data', views.get_tem, name='get_tem_data'),
     path('devices/<slug:device_name>/json/humi_data', views.get_humi, name='get_humi_data'),
-    path('devices/<slug:device_name>/data_chart', views.show_chart, name='show_chart'),
+    path('devices/<slug:device_name>/data_device', views.get_latest_telemetry, name='show_data'),
 ]
 handler404 = 'cloud.views.handler404'
 handler500 = 'cloud.views.handler404'

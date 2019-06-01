@@ -50,6 +50,8 @@ client = MongoClient("localhost", 27017)
 db = client.IoTDb
 device_collection = db.devices
 
+import time
+import uuid
 # Create your views here.
 
 ################ Base ####################
@@ -138,7 +140,7 @@ def NewFacilities(request,siteID):
     try:
         error = {}
         data = {}
-        site = models.Sites.objects.filter(siteid= siteID)
+        site = models.Sites.objects.filter(siteid=siteID)
         if request.method == 'POST':
             data['facilityname'] = request.POST.get('FacilityName')
             data['manageFactor'] = request.POST.get('ManagementSystemFactor')
@@ -5125,32 +5127,44 @@ def ListSensor(request, gatewayID):
         raise Http404
     return render(request, 'FacilityUI/component/sensorListDisplay.html', {'obj':obj, 'gatewayID':gatewayID, 'facilityID':facility_id})
 
-def new_device(request, facility_id):
-    try:
-        data = {}
-        error = {}
-        faci = models.Facility.objects.get(facilityid= facilityID)
-        if request.method == 'POST':
-            data['gw_name'] = request.POST.get('gw_name')
-            data['registrationdate'] = request.POST.get('registrationdate')
-            data['description'] = request.POST.get('description')
-            count = models.Devices.objects.filter(device_id= data['device_id']).count()
-            if count > 0:
-                error['exist']='This equipment already exist!'
-            else:
-                dv = models.Devices(device_name= data['gw_name'],
-                                    siteid_id= faci.siteid_id, facilityid_id= facilityID, 
-                                    registration_date = data['registrationdate'],
-                                    device_desc= data['description'])
-                dv.save()
-                return redirect('gatewayDisplay', facilityID=facilityID)
-    except:
-        raise Http404
-    return render(request, 'FacilityUI/equipment/gatewayNew.html', {'data':data, 'facilityID':facilityID, 'siteID':faci.siteid_id})
+# def new_device(request, facility_id):
+#     try:
+#         data = {}
+#         error = {}
+#         faci = models.Facility.objects.get(facilityid= facilityID)
+#         if request.method == 'POST':
+#             data['gw_name'] = request.POST.get('gw_name')
+#             data['registrationdate'] = request.POST.get('registrationdate')
+#             data['description'] = request.POST.get('description')
+#             count = models.Devices.objects.filter(device_id= data['device_id']).count()
+#             if count > 0:
+#                 error['exist']='This equipment already exist!'
+#             else:
+#                 dv = models.Devices(device_name= data['gw_name'],
+#                                     siteid_id= faci.siteid_id, facilityid_id= facilityID, 
+#                                     registration_date = data['registrationdate'],
+#                                     device_desc= data['description'])
+#                 dv.save()
+#                 return redirect('gatewayDisplay', facilityID=facilityID)
+#     except:
+#         raise Http404
+#     return render(request, 'FacilityUI/equipment/gatewayNew.html', {'data':data, 'facilityID':facilityID, 'siteID':faci.siteid_id})
 
-def get_all_telemetry(request, device_name):
+def get_latest_telemetry(request, device_name):
     data = device_collection.find({'device':device_name})
-    return render(request, )
+    print(device_name)
+    _list = sorted(data, key=lambda k:k['timestamp'], reverse=True)
+    obj = []
+    count = 0
+    for a in _list:
+        tmp = models.Collections()
+        tmp.type_data = a["type"]
+        tmp.value = format(a["value"], '.2f')
+        tmp.timestamp = a["timestamp"]
+        print(tmp.timestamp)
+        obj.append(tmp)
+        count = count + 1
+    return render(request, 'FacilityUI/Devices/device_show.html', {'obj':obj[:5]})
 
 def devices(request, facilityID):
     siteid = models.Sites.objects.filter(userID_id=request.session['id'])[0].siteid
@@ -5160,10 +5174,10 @@ def devices(request, facilityID):
     countnoti = noti.filter(state=0).count()
     count = models.Emailto.objects.filter(Q(Emailt=models.ZUser.objects.filter(id=request.session['id'])[0].email),
                                           Q(Is_see=0)).count()
-    print("In device function: facility " + str(facilityID))
+    print("In devices function: facility " + str(facilityID))
     try:
         faci = models.Facility.objects.get(facilityid=facilityID)
-        data = models.devices.objects.filter(facilityid=facilityID)
+        data = models.Devices.objects.filter(facilityid=facilityID)
         print(data[0].device_name)
         pagiDevices = Paginator(data, 25)
         pageDevices = request.GET.get('page', 1)
@@ -5194,40 +5208,45 @@ def devices(request, facilityID):
 def new_device(request, facilityID):
     siteid = models.Sites.objects.filter(userID_id=request.session['id'])[0].siteid
     faci = models.Facility.objects.get(siteid=siteid)
-    list_type = models.device_type.objects.all()
     countveri = models.Verification.objects.filter(facility=faci.facilityid).filter(Is_active=0).count()
     noti = models.ZNotification.objects.all().filter(id_user=request.session['id'])
     countnoti = noti.filter(state=0).count()
     count = models.Emailto.objects.filter(Q(Emailt=models.ZUser.objects.filter(id=request.session['id'])[0].email),
                                           Q(Is_see=0)).count()
+    list_type = models.DeviceTypes.objects.all()
     try:
         data = {}
         error = {}
         faci = models.Facility.objects.get(facilityid=facilityID)
-        devicetype = models.device_type.objects.all()
+        devicetype = models.DeviceTypes.objects.all()
         if request.method == 'POST':
+            print(facilityID)
+            print('zxxxx')
             data['devicename'] = request.POST.get('devicename')
-            data['uuid'] = request.POST.get('uuid')
+            data['uuid'] = str(uuid.uuid4())
             data['devicetype'] = request.POST.get('devicetype')
-            data['creattime'] = request.POST.get('creattime')
+            data['createtime'] = request.POST.get('createtime')
             data['description'] = request.POST.get('decription')
-            count = models.devices.objects.filter(uuid=data['uuid']).count()
+            print(data['devicetype'])
+            count = models.Devices.objects.filter(device_name=data['devicename']).count()
             if count > 0:
                 error['exist'] = 'This equipment already exist!'
             else:
-                eq = models.devices(uuid=data['uuid'],
-                                            devicename=data['devicename'],
-                                    devicetypeid_id=models.device_type.objects.get(
-                                        devicetypename=data['devicetype']).devicetypeid,
-                                            facilityid_id=facilityID,
-                                            creattime=data['creattime'],
-                                            description=data['description'])
-                eq.save()
-                return redirect('devices', facilityID=facilityID)
+                device_type_id = models.DeviceTypes.objects.get(device_type_name=data['devicetype']).device_type_id
+                print('xxx ' + str(device_type_id))
+                device = models.Devices()
+                print("ok")
+                device.device_name = data['devicename']
+                device.devicetypeid = device_type_id
+                device.uuid = data['uuid']
+                # device = models.Devices(device_name=data["devicename"], devicetypeid=models.DeviceTypes.objects.get(device_type_name=data['devicetype']).device_type_id, created_time=data['createtime'], uuid=data['uuid'], description=data['description'], facilityid=facilityID)
+                print(device.devicetypeid)
+                device.save()
+                print("In new_device: facilityID " + str(facilityID))
+            return redirect('devices', facilityID=facilityID)
     except:
         raise Http404
     return render(request, 'FacilityUI/Devices/device_new.html',
                   {'page': 'newDevice', 'data': data, 'devicetype': devicetype,
                 'facilityID': facilityID, 'siteID': faci.siteid_id,
-                   'info': request.session, 'noti': noti, 'countnoti': countnoti, 'count': count,
-                   'countveri': countveri, 'listtype':list_type})
+                   'info': request.session, 'listtype':list_type})

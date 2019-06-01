@@ -1139,13 +1139,13 @@ class VeriContent(models.Model):
         managed = False
         db_table = 'vericontent'
 
-class devices(models.Model):
+class Devices(models.Model):
     deviceid = models.AutoField(primary_key=True,blank=True,null=False,db_column='device_id')
-    devicetypeid = models.ForeignKey('device_type', on_delete=models.CASCADE, db_column='device_type_id')
+    devicetypeid = models.ForeignKey('DeviceTypes', on_delete=models.CASCADE, db_column='device_type_id', null=False)
     uuid = models.TextField(db_column='uuid',blank=True,null=False)
-    device_name = models.CharField(db_column='device_name', max_length=40,blank=True,null=False)
+    device_name = models.TextField(db_column='device_name', null=False)
     created_time = models.DateTimeField(db_column='created_time', default=datetime.datetime.now())
-    facilityid = models.ForeignKey('facility',db_column='facility_id', blank=True,null=False,on_delete=models.CASCADE)
+    facilityid = models.ForeignKey('Facility', db_column='facility_id', blank=True,null=False, on_delete=models.CASCADE)
     description = models.TextField(db_column='description', blank=True)
 
     class Meta:
@@ -1153,10 +1153,16 @@ class devices(models.Model):
         db_table = 'devices'
         # ordering = ('deviceid,')
 
-class device_type(models.Model):
+class DeviceTypes(models.Model):
     device_type_id = models.AutoField(primary_key=True, blank=True, null = False, db_column='device_type_id')
-    device_type_name = models.CharField(db_column='device_type_name', max_length=200, blank=True, null=False)
+    device_type_name = models.TextField(db_column='device_type_name', blank=True, null=False)
 
     class Meta:
         managed = False
         db_table = 'device_types'
+
+class Collections(models.Model):
+    device = ''
+    value = ''
+    type_data = ''
+    timestamp = ''

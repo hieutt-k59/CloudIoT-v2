@@ -23,7 +23,7 @@ def publish_data(val, type_data):
     PORT = int(args.port)
     client = mqtt.Client()
     client.connect (CLOUD_URL, PORT, 60)
-    data = {'device':'sensor 1', 'value': val, 'type':type_data, 'timestamp':str(datetime.now())}
+    data = {'device':'sensor_1', 'value': val, 'type':type_data, 'timestamp':str(datetime.now())}
     print(data['device'])
     send_data = json.dumps(data)
     client.publish("data/adfadfadfasf", send_data)
@@ -35,7 +35,7 @@ def main():
     for i in range(23):
         publish_data(tem, type_data)
         print(str(i+1) + ". Data was sent at " + str(datetime.now()))
-        time.sleep(10)
+        time.sleep(2)
         tem = tem + random.random()
 
 if __name__ == "__main__":

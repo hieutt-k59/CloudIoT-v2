@@ -2,10 +2,10 @@
 {% load staticfiles %}
 {% load static %}
 
-{% block title %}Equipment{% endblock %}
+{% block title %}Device{% endblock %}
 
 {% block vertical %}
-    <a class="active">Equipment Management</a>
+    <a class="active">Device Management</a>
     <a href="{% block listeq %}{% endblock %}" class="{% if page == 'listEquip' %}activeLink{% endif %}"><i class="fa fa-list">&emsp;List of Equipments</i></a>
     <a href="{% block devices %}{% endblock %}"><i class="fa fa-list">&emsp;List of Devices</i></a>
         <a href="{% block newdevice %}{% endblock %}"><i class="fa fa-anchor">&emsp;New Device</i></a>
