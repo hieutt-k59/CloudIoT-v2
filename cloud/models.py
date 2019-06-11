@@ -1166,3 +1166,13 @@ class Collections(models.Model):
     value = ''
     type_data = ''
     timestamp = ''
+
+class AssessmentName(models.Model):
+    id = models.AutoField(primary_key=True, db_column='id')
+    assessmentname = models.TextField(db_column='assessmentname')
+    componentid = models.IntegerField(db_column='component_id')
+    timestamp = models.DateTimeField(db_column='timestamp', default=datetime.datetime.now())
+
+    class Meta:
+        managed = False
+        db_table = 'assessment_name'

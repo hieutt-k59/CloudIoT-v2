@@ -15,9 +15,9 @@ dbClient = MongoClient("localhost", 27017)
 # db_name = "IoTDb"
 # collection_name = "devices"
 db = dbClient.IoTDb
-collection = db.devices
+collection = db.assessment
 # This is the Subscriber
-TOPIC = "+/+"
+TOPIC = "+/+/+"
 def on_connect(client, userdata, flags, rc):
     client.subscribe(TOPIC, 0)
     print("Connected MosquittoMQTT with result code: " + str(rc))
@@ -29,10 +29,19 @@ def on_message(client, userdata, msg):
     split_arr = (str(msg.topic)).split('/')
     payload = msg.payload.decode()
     data = json.loads(payload)
-    str_type = split_arr[0]
-    print("Type message: " + str_type)
+    data['componentID'] = int(split_arr[0])
+    data['subType'] = split_arr[2]
+    data['assessmentName'] = split_arr[1]
+    assessname = models.AssessmentName.objects.filter(assessmentname=split_arr[1])
+    data['timestamp'] = datetime.now()
+    if assessname.count() < 1:
+        assess = models.AssessmentName(assessmentname=split_arr[1], componentid=int(split_arr[0]), timestamp=data['timestamp'])
+        print("Save " + split_arr[1] + " to database!")
+        assess.save()
+    # str_type = split_arr[0]
+    print("Proposal name: " + split_arr[1])
     print(data)
-    devices_collection = db.devices
+    devices_collection = db.assessment
     devices_collection.insert_one(data)
 
     print("Finished!")

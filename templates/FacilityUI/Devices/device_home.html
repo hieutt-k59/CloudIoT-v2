@@ -1,11 +1,12 @@
-{% extends 'BaseUI/BaseFacility/baseDevice.html' %}
-{% block title %}Devices{% endblock %}
+{% extends 'BaseUI/BaseFacility/baseProposal.html' %}
+{% block title %}Telemetry{% endblock %}
 {#<!--------------- BLOCK MENU ------------->#}
 {#{% block listeq %}{% url 'equipmentDisplay' %}{% endblock %}#}
 {#{% block neweq %}{% url 'equipmentNew' facilityID %}{% endblock %}#}
-{% block backfaci %}{% url 'facilitiesDisplay' siteID %}{% endblock %}
+{% block listProposal %}{% url 'proposalDisplay' componentID %}{% endblock %}
+{% block listPakage %}{% url 'list_telemetry' componentID %}{% endblock %}
+{% block backComp %}{% url 'componentDisplay' equipmentID %}{% endblock %}
 {#{% block devices %}{% url 'devices' %}{% endblock %}#}
-{% block listeq %}{% url 'equipmentDisplay' facilityID %}{% endblock %}
 {#{% block neweq %}{% url 'equipmentNew' facilityID %}{% endblock %}#}
 {#{% block backfaci %}{% url 'facilitiesDisplay'  %}{% endblock %}#}
 {#{% block listfaci %}{% url 'facilitiesDisplay' siteID %}{% endblock %}#}
@@ -14,10 +15,8 @@
 {#{% block manu %}{% url 'manufactureDisplay' siteID %}{% endblock %}#}
 {#{% block uploadInsp %}{% url 'upload' siteID %}{% endblock %}#}
 {#{% block uploadPlant %}{% url 'uploadPlan' siteID %}{% endblock %}#}
-{% block newdevice %}{% url 'newdevice' facilityID  %}{% endblock %}
 {#<!--------------- END BLOCK -------------->#}
 
-{% block devices %}{% url 'devices' facilityID %}{% endblock %}
 {% block data-content %}
     <form method="post">
     {% csrf_token %}
@@ -25,29 +24,32 @@
 {#            {% if faci %}<a href="{% url 'equipmentDisplay' faci.facilityid %}">{{ faci.facilityname }}</a>{% endif %}#}
         </div>
         <div style="text-align: center">
-            <caption><b style="font-size: 22px;color: #444444">List of Decives</b></caption>
+            <caption><b style="font-size: 22px;color: #444444">List of telemetry pakage</b></caption>
             <br><br>
             <table class="table" id="mytable">
                 <thead>
                     <tr>
-                        <th width="200px" style="text-align: center"><i class="fa fa-tag"></i>&ensp;Device Name</th>
-                        <th width="200px" style="text-align: center"><i class="fa fa-fax"></i>&ensp;UUID</th>
-                        <th width="200px" style="text-align: center"><i class="fa fa-bar-chart-o"></i>&ensp;Created-time</th>
-                        <th width="200px" style="text-align: center"><i class="fa fa-fax"></i>&ensp;Description</th>
+                        <th width="300px" style="text-align: center"><i class="fa fa-tag"></i>&ensp;Telemetry Pakage</th>
+                        <th width="300px" style="text-align: center"><i class="fa fa-cog"></i>&ensp;Component Name</th>
+                        <th width="300px" style="text-align: center"><i class="fa fa-pallet"></i>&ensp;Equipment Name</th>
+                        <th width="300px" style="text-align: center"><i class="fa fa-clock"></i>&ensp;Stored-time</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for a in obj %}
                     <tr>
-                        <td style="text-align: center"><a href="{% url 'show_data' a.device_name %}">{{ a.device_name }}</a></td>
-                        <td style="text-align: center">{{ a.uuid }}</td>
-                        <td style="text-align: center">{{ a.created_time }}</td>
-                        <td align="center">{{a.description}}</a></td>
+                        <td style="text-align: center"><a href="{% url 'show_telemetry' a.assessmentname %}">{{a.assessmentname}}</a></td>
+                        <td style="text-align: center">{{component_name}}</td>
+                        <td style="text-align: center">{{equipment_name}}</td>
+                        <td style="text-align: center">{{a.timestamp}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
-
+            <script>
+            var eqID = {{equipmentID}};
+            console.log(eqID);
+            </script>
               {#          Pagination div  #}
             <div>
 
@@ -56,11 +58,6 @@
 
 {#            tool div #}
             <br>
-            <div>
-                <button type="submit" name="_edit" class="btn btn-primary"><i class="fa fa-pencil">&emsp;Edit Selected</i></button>
-                <button type="submit" name="_delete" class="btn btn-warning" id="sub" onclick="Sub()"><i class="fa fa-trash-o">&emsp;Delete Selected</i></button>
-                <button type="submit" name="_new" class="btn btn-primary"><i class="fa fa-pencil">&emsp;New Equipment</i></button>
-            </div>
 
         </div>
     </form>

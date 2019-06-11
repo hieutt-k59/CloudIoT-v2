@@ -1,0 +1,126 @@
+Stream:
+    Typing:
+        Component Number
+        Primary Fluid
+        Most Volatile Fluid
+        Amine Solution Composition
+        Exposed to Sulphur-Bearing Compounds
+        Material is Exposed to Fluids, Mists, or Solids Containing Chlorine Internally
+    Collecting:
+        Aqueous Phase During Operation
+        Aqueous Phase During Shut Down
+        Toxic Constituents
+        Environment Contains Caustic in Any Concentration
+        Chloride Ion (ppm)
+        CO3 Concentration in Water (ppm)
+        Presence of Hydrofluoric Acid
+        Presence of Cyanides
+        NaOH Concentration (%)
+        Release Fluid Percent Toxic (%)
+        H2S Content in Water (ppm)
+        pH of Water
+        Exposed To Acid Gas Treating Amine
+        Exposure to Amine
+        Environment Contains H2S
+        Process Contains Hydrogen
+Equipment:
+    Typing:
+        Equipment Number
+        Equipment Type
+        Equipment Name
+        Design Code
+        Site
+        Facility
+        Manufacturer
+        Commission Date
+        PFD No.
+        Process Description
+        Description
+        Administrative Control for Upset Management
+        Contains Deadlegs
+        Highly Effective Inspection for Deadlegs
+        Downtime Protection Used
+        Heat Traced
+        PWHT
+        Liner Online Monitoring
+        Online Monitoring
+        System Management Factor
+
+    Collecting:
+        Cylic Operation
+        Steamed Out Prior to Water Flushing
+        External Environment
+        Interface at Soil or Water
+        Material is Exposed to Fluids, Mists or Solids Containing Chlorine Externally
+        Min. Required Temperature Before Pressurisation Allowed by Admin
+        Presence of Sulphides, Moisture and Oxygen During Shutdown
+        Presence of Sulphides, Moisture and Oxygen During Operation
+        Pressurisation Controlled by Admin
+        Thermal History
+        Equipment is operating for Many Years at Lowest Expected Temperature
+        Equipment Volume
+
+
+Component:
+    Typing:
+        Equipment Number
+        Component Number
+        Component Type
+        API Component Type
+        Component Name
+        Component Risk Links to Equipment Risk
+        Description
+        Assessment Date
+        Risk Analysis Period
+        Delta FATT
+        Tramp Elements
+        Highly Effective Inspection for Corrosion at Injection Mix Point
+        Joint Type of Branch
+        Number of Fittings on Pipe
+        Corrective Action to Mitigate Vibration
+    Collecting:
+        Maximum Brinnell Hardness of Weld
+        Nominal Diameter,in
+        Nominal Thickness,mm
+        Current Thickness,mm
+        Min. Required Thickness,mm
+        Current Corrosion Rate,mm/yr
+        Branch Diameter
+        Chemical Injection
+        Complexity of Protrusions
+        Presence of Cracks
+        Cyclic Loading Connected within 15.25m
+        Damage Found During Inspection
+        Pipe Condition
+        Previous Failures
+        Amount of Shaking of the Pipe
+        Visible or Audible Shaking Detected
+        Accumulated Time Shaking of Pipe
+Operating Condition:
+    Maximum Operating Temperature
+    Minimum Operating Temperature
+    Critical Exposure Temperature
+    Maximum Operating Pressure
+    Minimum Operating Pressure
+    Operating Hydrogen Partial Pressure
+    Flow Rate
+    % Operating at -12 °C to -8 °C
+    % Operating at -8 °C to 6 °C
+    % Operating at 6 °C to 32 °C
+    % Operating at 32 °C to 71 °C
+    % Operating at 71 °C to 107 °C
+    % Operating at 107 °C to 121 °C
+    % Operating at 121 °C to 135 °C
+    % Operating at 135 °C to 162 °C
+    % Operating at 162 °C to 176 °C
+    % Operating at 176 °C or above
+Material:
+    Brittle Fracture Governing Thickness,mm
+    Chromium ≥ 12%
+    Sulfur Content
+Coating Cladding Linning Insulation:
+    External Coating Quality
+    Cladding Corrosion Rate
+    Internal Liner Condition
+    Insulation Condition
+    

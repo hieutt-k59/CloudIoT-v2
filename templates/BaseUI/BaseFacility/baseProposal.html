@@ -6,5 +6,6 @@
 {% block vertical %}
     <a class="active">Proposal Management</a>
     <a href="{% block listProposal %}{% endblock %}" class="{% if page == 'listProposal' or page == 'listProposalTank' %}activeLink{% endif %}"><i class="fa fa-list">&emsp;List of Proposals</i></a>
+    <a href="{% block listPakage %}{% endblock %}" ><i class="fa fa-envelope">&emsp;List of Pakage</i></a>
     <a href="{% block backComp %}{% endblock %}" ><i class="fa fa-arrow-left">&emsp;Back to Component</i></a>
 {% endblock %}

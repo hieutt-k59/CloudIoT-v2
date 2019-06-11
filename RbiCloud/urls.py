@@ -119,6 +119,9 @@ urlpatterns = [
     path('devices/<slug:device_name>/json/tem_data', views.get_tem, name='get_tem_data'),
     path('devices/<slug:device_name>/json/humi_data', views.get_humi, name='get_humi_data'),
     path('devices/<slug:device_name>/data_device', views.get_latest_telemetry, name='show_data'),
+    path('list_telemetry/<int:componentID>', views.list_telemetry_subject, name='list_telemetry'),
+    path('get_telemetry/<slug:proposalname>', views.get_telemetry_data, name='show_telemetry'),
+    path('verify/<slug:proposalname>', views.verify_telemetry_data, name='verifydata'),
 ]
 handler404 = 'cloud.views.handler404'
 handler500 = 'cloud.views.handler404'

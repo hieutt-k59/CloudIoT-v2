@@ -48,7 +48,7 @@ from pymongo import MongoClient
 
 client = MongoClient("localhost", 27017)
 db = client.IoTDb
-device_collection = db.devices
+device_collection = db.assessment
 
 import time
 import uuid
@@ -2086,7 +2086,7 @@ def EditProposal(request, proposalID):
                                                                            'rwCoat':rwcoat, 'rwMaterial':rwmaterial, 'rwInputCa':rwinputca,
                                                                            'assDate':assDate, 'extDate':extDate,
                                                                            'componentID': rwassessment.componentid_id,
-                                                                           'equipmentID': rwassessment.equipmentid_id,'info':request.session,'noti':noti,'countnoti':countnoti,'count':count,'countveri':countveri})
+                                                                           'equipmentID': rwassessment.equipmentid_id,'info':request.session,'noti':noti,'countnoti':countnoti,'count':count})
 def EditTank(request, proposalID):
     siteid = models.Sites.objects.filter(userID_id=request.session['id'])[0].siteid
     faci = models.Facility.objects.get(siteid=siteid)
@@ -5165,6 +5165,609 @@ def get_latest_telemetry(request, device_name):
         obj.append(tmp)
         count = count + 1
     return render(request, 'FacilityUI/Devices/device_show.html', {'obj':obj[:5]})
+def verify_telemetry_data(request, proposalname):
+    siteid = models.Sites.objects.filter(userID_id=request.session['id'])[0].siteid
+    faci = models.Facility.objects.get(siteid=siteid)
+    countveri = models.Verification.objects.filter(facility=faci.facilityid).filter(Is_active=0).count()
+    noti = models.ZNotification.objects.all().filter(id_user=request.session['id'])
+    countnoti = noti.filter(state=0).count()
+    count = models.Emailto.objects.filter(Q(Emailt=models.ZUser.objects.filter(id=request.session['id'])[0].email),
+                                          Q(Is_see=0)).count()
+    try:
+        Fluid = ["Acid", "AlCl3", "C1-C2", "C13-C16", "C17-C25", "C25+", "C3-C4", "C5", "C6-C8", "C9-C12", "CO", "DEE",
+                 "EE", "EEA", "EG", "EO", "H2", "H2S", "HCl", "HF", "Methanol", "Nitric Acid", "NO2", "Phosgene", "PO",
+                 "Pyrophoric", "Steam", "Styrene", "TDI", "Water"]
+        comp = models.ComponentMaster.objects.get(componentid=(device_collection.find_one({'assessmentName':proposalname}))["componentID"])
+        assess_date = models.AssessmentName.objects.get(assessmentname=proposalname).timestamp
+        assess_date.strftime('%Y-%m-%y %H:%M:%S')
+        target = models.FacilityRiskTarget.objects.get(facilityid= models.EquipmentMaster.objects.get(equipmentid= comp.equipmentid_id).facilityid_id)
+        datafaci = models.Facility.objects.get(facilityid= models.EquipmentMaster.objects.get(equipmentid= comp.equipmentid_id).facilityid_id)
+        data_equipment = device_collection.find_one({'assessmentName':proposalname, 'subType':'equipment'})
+        rwequipment = models.RwEquipment(cyclicoperation = data_equipment["CylicOper"],
+                                            externalenvironment = data_equipment["ExternalEnvironment"],
+                                            interfacesoilwater = data_equipment["InterfaceSoilWater"],
+                                            materialexposedtoclext = data_equipment["MFTF"],
+                                            minreqtemperaturepressurisation = data_equipment["minTemp"],
+                                            presencesulphideso2shutdown = data_equipment["PresenceofSulphidesShutdown"],
+                                            presencesulphideso2 = data_equipment["PresenceofSulphides"],
+                                            pressurisationcontrolled = data_equipment["PressurisationControlled"],
+                                            thermalhistory = data_equipment["ThermalHistory"],
+                                            steamoutwaterflush = data_equipment["SteamedOut"],
+                                            volume = data_equipment["EquipmentVolumn"]
+        )
+        data_component = device_collection.find_one({'assessmentName':proposalname, 'subType':'component'})
+        rwcomponent = models.RwComponent(brinnelhardness = data_component["MaxBrinell"],
+            nominaldiameter = data_component["NorminalDiameter"],
+            nominalthickness = data_component["NorminalThickness"],
+            currentthickness = data_component["CurrentThickness"],
+            minreqthickness = data_component["MinReqThickness"],
+            currentcorrosionrate = data_component["CurrentCorrosionRate"],
+            branchdiameter = data_component["BranchDiameter"],
+            chemicalinjection = data_component["ChemicalInjection"],
+            complexityprotrusion = data_component["complex"],
+            crackspresent = data_component["PresenceCracks"],
+            cyclicloadingwitin15_25m = data_component["CylicLoad"],
+            damagefoundinspection = data_component["DFDI"],
+            pipecondition = data_component["PipeCondition"],
+            previousfailures = data_component["PreviousFailures"],
+            shakingamount = data_component["ShakingAmount"],
+            shakingdetected = data_component["VASD"],
+            shakingtime = data_component["timeShakingPipe"],
+        )
+        print(rwcomponent.nominaldiameter)
+
+        data_stream = device_collection.find_one({'assessmentName':proposalname, 'subType':'stream'})
+        rwstream = models.RwStream(aqueousshutdown = data_stream["AqueShutdown"],
+            aqueousoperation = data_stream["AqueOp"],
+            toxicconstituent = data_stream["ToxicConstituents"],
+            caustic = data_stream["EnvCaustic"],
+            chloride = data_stream["ChlorideIon"],
+            co3concentration = data_stream["CO3"],
+            cyanide = data_stream["PresenceCyanides"],
+            exposedtogasamine = data_stream["exposureAcid"],
+            exposedtosulphur = data_stream["ExposedSulfur"],
+            exposuretoamine = data_stream["ExposureAmine"],
+            h2s = data_stream["EnvCH2S"],
+            h2sinwater = data_stream["H2SInWater"],
+            hydrogen = data_stream["hydrogen"],
+            hydrofluoric = data_stream["HydrogenFluoric"],
+            materialexposedtoclint = data_stream["materialExposedFluid"],
+            maxoperatingpressure = data_stream["maxOP"],
+            maxoperatingtemperature = data_stream["maxOT"],
+            minoperatingpressure = data_stream["minOP"],
+            minoperatingtemperature = data_stream["minOT"],
+            naohconcentration = data_stream["NaOHConcentration"],
+            releasefluidpercenttoxic = data_stream["ReleasePercentToxic"],
+            waterph = data_stream["PHWater"],
+            h2spartialpressure = data_stream["OpHydrogenPressure"]
+        )
+
+        print("stream")
+        data_excor = device_collection.find_one({'assessmentName':proposalname, 'subType':'excor'})
+        print (data_excor)
+        rwexcor = models.RwExtcorTemperature(minus12tominus8=float(data_excor["Op1"]),
+            minus8toplus6=float(data_excor["Op2"]),
+            plus6toplus32=float(data_excor["Op3"]),
+            plus32toplus71=float(data_excor["Op4"]),
+            plus71toplus107=float(data_excor["Op5"]),
+            plus107toplus121=float(data_excor["Op6"]),
+            plus121toplus135=float(data_excor["Op7"]),
+            plus135toplus162=float(data_excor["Op8"]),
+            plus162toplus176=float(data_excor["Op9"]),
+            morethanplus176=float(data_excor["Op10"])
+        )
+        print ("excor")
+
+        data_coat = device_collection.find_one({'assessmentName':proposalname, 'subType':'coating'})
+        rwcoat = models.RwCoating(externalcoating=data_coat["ExternalCoating"],
+            externalinsulation=data_coat["ExternalInsulation"],
+            internallining=data_coat["InternalLining"],
+            externalcoatingquality=data_coat['ExternalCoatingQuality'],
+            internallinercondition=data_coat['InternalLinerCondition'],
+            claddingcorrosionrate=data_coat['CladdingCorrosionRate']
+        )
+        print("coat")
+        data_material = device_collection.find_one({'assessmentName':proposalname, 'subType':'material'})
+        rwmaterial = models.RwMaterial(brittlefracturethickness=data_material['BrittleFacture'],
+            sigmaphase=data_material['SigmaPhase'],
+            sulfurcontent=data_material['SulfurContent'],
+            temper=data_material["SusceptibleTemper"],
+            chromemoreequal12=data_material["Chromium"],
+        )
+        print("material")
+        data_ca = device_collection.find_one({'assessmentName':proposalname, 'subType':'CA'})
+        rwinputca = models.RwInputCaLevel1(system=data_ca['System'],
+            detection_type=data_ca['DetectionType'],
+            isulation_type=data_ca['InsulationType'],
+            toxic_percent=data_ca['ToxicPercent']
+        )
+        print("ca")  
+        # assDate = rwassessment.assessmentdate.strftime('%Y-%m-%d')
+        
+
+        # comp = models.ComponentMaster.objects.get(componentid=rwassessment.componentid_id)
+        data = {}
+        if request.method == 'POST':
+            data['assessmentname'] = request.POST.get('AssessmentName')
+            data['assessmentdate'] = request.POST.get('assessmentdate')
+            data['apicomponenttypeid'] = models.ApiComponentType.objects.get(apicomponenttypeid= comp.apicomponenttypeid).apicomponenttypename
+            data['equipmentType'] = models.EquipmentType.objects.get(equipmenttypeid= models.EquipmentMaster.objects.get(equipmentid= comp.equipmentid_id).equipmenttypeid_id).equipmenttypename
+            data['riskperiod'] = request.POST.get('RiskAnalysisPeriod')
+            if request.POST.get('adminControlUpset'):
+                adminControlUpset = 1
+            else:
+                adminControlUpset = 0
+
+            if request.POST.get('ContainsDeadlegs'):
+                containsDeadlegs = 1
+            else:
+                containsDeadlegs = 0
+
+            if request.POST.get('Highly'):
+                HighlyEffe = 1
+            else:
+                HighlyEffe = 0
+
+            if request.POST.get('CylicOper'):
+                cylicOP = 1
+            else:
+                cylicOP = 0
+
+            if request.POST.get('Downtime'):
+                downtime = 1
+            else:
+                downtime = 0
+
+            if request.POST.get('SteamedOut'):
+                steamOut = 1
+            else:
+                steamOut = 0
+
+            if request.POST.get('HeatTraced'):
+                heatTrace = 1
+            else:
+                heatTrace = 0
+
+            if request.POST.get('PWHT'):
+                pwht = 1
+            else:
+                pwht = 0
+
+            if request.POST.get('InterfaceSoilWater'):
+                interfaceSoilWater = 1
+            else:
+                interfaceSoilWater = 0
+
+            if request.POST.get('PressurisationControlled'):
+                pressureControl = 1
+            else:
+                pressureControl = 0
+
+            if request.POST.get('LOM'):
+                linerOnlineMoniter = 1
+            else:
+                linerOnlineMoniter = 0
+
+            if request.POST.get('EquOper'):
+                lowestTemp = 1
+            else:
+                lowestTemp = 0
+
+            if request.POST.get('PresenceofSulphidesShutdow'):
+                presentSulphidesShutdown =1
+            else:
+                presentSulphidesShutdown = 0
+
+            if request.POST.get('MFTF'):
+                materialExposed = 1
+            else:
+                materialExposed = 0
+
+            if request.POST.get('PresenceofSulphides'):
+                presentSulphide = 1
+            else:
+                presentSulphide = 0
+
+            data['minTemp'] = request.POST.get('Min')
+            data['ExternalEnvironment'] = request.POST.get('ExternalEnvironment')
+            data['ThermalHistory'] = request.POST.get('ThermalHistory')
+            data['OnlineMonitoring'] = request.POST.get('OnlineMonitoring')
+            data['EquipmentVolumn'] = request.POST.get('EquipmentVolume')
+
+            data['normaldiameter'] = request.POST.get('NominalDiameter')
+            data['normalthick'] = request.POST.get('NominalThickness')
+            data['currentthick'] = request.POST.get('CurrentThickness')
+            data['tmin'] = request.POST.get('tmin')
+            data['currentrate'] = request.POST.get('CurrentRate')
+            data['deltafatt'] = request.POST.get('DeltaFATT')
+
+            if request.POST.get('DFDI'):
+                damageDuringInsp = 1
+            else:
+                damageDuringInsp = 0
+
+            if request.POST.get('ChemicalInjection'):
+                chemicalInj = 1
+            else:
+                chemicalInj = 0
+
+            if request.POST.get('PresenceCracks'):
+                crackpresent = 1
+            else:
+                crackpresent = 0
+
+            if request.POST.get('HFICI'):
+                HFICI = 1
+            else:
+                HFICI = 0
+
+            if request.POST.get('TrampElements'):
+                TrampElement = 1
+            else:
+                TrampElement = 0
+
+            data['MaxBrinell'] = request.POST.get('MBHW')
+            data['complex'] = request.POST.get('ComplexityProtrusions')
+            data['CylicLoad'] = request.POST.get('CLC')
+            data['branchDiameter'] = request.POST.get('BranchDiameter')
+            data['joinTypeBranch'] = request.POST.get('JTB')
+            data['numberPipe'] = request.POST.get('NFP')
+            data['pipeCondition'] = request.POST.get('PipeCondition')
+            data['prevFailure'] = request.POST.get('PreviousFailures')
+
+            if request.POST.get('VASD'):
+                visibleSharkingProtect = 1
+            else:
+                visibleSharkingProtect = 0
+
+            data['shakingPipe'] = request.POST.get('ASP')
+            data['timeShakingPipe'] = request.POST.get('ATSP')
+            data['correctActionMitigate'] = request.POST.get('CAMV')
+
+            # OP condition
+            data['maxOT'] = request.POST.get('MaxOT')
+            data['maxOP'] = request.POST.get('MaxOP')
+            data['minOT'] = request.POST.get('MinOT')
+            data['minOP'] = request.POST.get('MinOP')
+            data['OpHydroPressure'] = request.POST.get('OHPP')
+            data['criticalTemp'] = request.POST.get('CET')
+            data['OP1'] = request.POST.get('Operating1')
+            data['OP2'] = request.POST.get('Operating2')
+            data['OP3'] = request.POST.get('Operating3')
+            data['OP4'] = request.POST.get('Operating4')
+            data['OP5'] = request.POST.get('Operating5')
+            data['OP6'] = request.POST.get('Operating6')
+            data['OP7'] = request.POST.get('Operating7')
+            data['OP8'] = request.POST.get('Operating8')
+            data['OP9'] = request.POST.get('Operating9')
+            data['OP10'] = request.POST.get('Operating10')
+
+            #material
+            data['material'] = request.POST.get('Material')
+            data['maxDesignTemp'] = request.POST.get('MaxDesignTemp')
+            data['minDesignTemp'] = request.POST.get('MinDesignTemp')
+            data['designPressure'] = request.POST.get('DesignPressure')
+            data['tempRef'] = request.POST.get('ReferenceTemperature')
+            data['allowStress'] = request.POST.get('ASAT')
+            data['BrittleFacture'] = request.POST.get('BFGT')
+            data['CA'] = request.POST.get('CorrosionAllowance')
+            data['sigmaPhase'] = request.POST.get('SigmaPhase')
+            if request.POST.get('CoLAS'):
+                cacbonAlloy = 1
+            else:
+                cacbonAlloy = 0
+
+            if request.POST.get('AusteniticSteel'):
+                austeniticStell = 1
+            else:
+                austeniticStell = 0
+
+            if request.POST.get('SusceptibleTemper'):
+                suscepTemp = 1
+            else:
+                suscepTemp = 0
+
+            if request.POST.get('NickelAlloy'):
+                nickelAlloy = 1
+            else:
+                nickelAlloy = 0
+
+            if request.POST.get('Chromium'):
+                chromium = 1
+            else:
+                chromium = 0
+
+            data['sulfurContent'] = request.POST.get('SulfurContent')
+            data['heatTreatment'] = request.POST.get('heatTreatment')
+
+            if request.POST.get('MGTEHTHA'):
+                materialHTHA = 1
+            else:
+                materialHTHA = 0
+
+            data['HTHAMaterialGrade'] = request.POST.get('HTHAMaterialGrade')
+
+            if request.POST.get('MaterialPTA'):
+                materialPTA = 1
+            else:
+                materialPTA = 0
+
+            data['PTAMaterialGrade'] = request.POST.get('PTAMaterialGrade')
+            data['materialCostFactor'] = request.POST.get('MaterialCostFactor')
+
+            #Coating, Clading
+            if request.POST.get('InternalCoating'):
+                InternalCoating = 1
+            else:
+                InternalCoating = 0
+
+            if request.POST.get('ExternalCoating'):
+                ExternalCoating = 1
+            else:
+                ExternalCoating = 0
+
+            data['ExternalCoatingID'] = request.POST.get('ExternalCoatingID')
+            data['ExternalCoatingQuality'] = request.POST.get('ExternalCoatingQuality')
+
+            if request.POST.get('SCWD'):
+                supportMaterial = 1
+            else:
+                supportMaterial = 0
+
+            if request.POST.get('InternalCladding'):
+                InternalCladding = 1
+            else:
+                InternalCladding = 0
+
+            data['CladdingCorrosionRate'] = request.POST.get('CladdingCorrosionRate')
+
+            if request.POST.get('InternalLining'):
+                InternalLining = 1
+            else:
+                InternalLining = 0
+
+            data['InternalLinerType'] = request.POST.get('InternalLinerType')
+            data['InternalLinerCondition'] = request.POST.get('InternalLinerCondition')
+
+            if request.POST.get('ExternalInsulation')== "on" or request.POST.get('ExternalInsulation')== 1:
+                ExternalInsulation = 1
+            else:
+                ExternalInsulation = 0
+
+            if request.POST.get('ICC'):
+                InsulationCholride = 1
+            else:
+                InsulationCholride = 0
+
+            data['ExternalInsulationType'] = request.POST.get('ExternalInsulationType')
+            data['InsulationCondition'] = request.POST.get('InsulationCondition')
+
+            # Steam
+            data['NaOHConcentration'] = request.POST.get('NaOHConcentration')
+            data['ReleasePercentToxic'] = request.POST.get('RFPT')
+            data['ChlorideIon'] = request.POST.get('ChlorideIon')
+            data['CO3'] = request.POST.get('CO3')
+            data['H2SContent'] = request.POST.get('H2SContent')
+            data['PHWater'] = request.POST.get('PHWater')
+
+            if request.POST.get('EAGTA'):
+                exposureAcid = 1
+            else:
+                exposureAcid = 0
+
+            if request.POST.get('ToxicConstituents'):
+                ToxicConstituents = 1
+            else:
+                ToxicConstituents = 0
+
+            data['ExposureAmine'] = request.POST.get('ExposureAmine')
+            data['AminSolution'] = request.POST.get('ASC')
+
+            if request.POST.get('APDO'):
+                aquaDuringOP = 1
+            else:
+                aquaDuringOP = 0
+
+            if request.POST.get('APDSD'):
+                aquaDuringShutdown = 1
+            else:
+                aquaDuringShutdown = 0
+
+            if request.POST.get('EnvironmentCH2S'):
+                EnvironmentCH2S = 1
+            else:
+                EnvironmentCH2S = 0
+
+            if request.POST.get('PHA'):
+                presentHF = 1
+            else:
+                presentHF = 0
+
+            if request.POST.get('PresenceCyanides'):
+                presentCyanide = 1
+            else:
+                presentCyanide = 0
+
+            if request.POST.get('PCH'):
+                processHydrogen = 1
+            else:
+                processHydrogen = 0
+
+            if request.POST.get('ECCAC'):
+                environCaustic = 1
+            else:
+                environCaustic = 0
+
+            if request.POST.get('ESBC'):
+                exposedSulfur = 1
+            else:
+                exposedSulfur = 0
+
+            if request.POST.get('MEFMSCC'):
+                materialExposedFluid = 1
+            else:
+                materialExposedFluid = 0
+            # CA
+            data['APIFluid'] = request.POST.get('APIFluid')
+            data['MassInventory'] = request.POST.get('MassInventory')
+            data['Systerm'] = request.POST.get('Systerm')
+            data['MassComponent'] = request.POST.get('MassComponent')
+            data['EquipmentCost'] = request.POST.get('EquipmentCost')
+            data['MittigationSysterm'] = request.POST.get('MittigationSysterm')
+            data['ProductionCost'] = request.POST.get('ProductionCost')
+            data['ToxicPercent'] = request.POST.get('ToxicPercent')
+            data['InjureCost'] = request.POST.get('InjureCost')
+            data['ReleaseDuration'] = request.POST.get('ReleaseDuration')
+            data['EnvironmentCost'] = request.POST.get('EnvironmentCost')
+            data['PersonDensity'] = request.POST.get('PersonDensity')
+            data['DetectionType'] = request.POST.get('DetectionType')
+            data['IsulationType'] = request.POST.get('IsulationType')
+            rwassessment = models.RwAssessment(equipmentid_id=comp.equipmentid_id, componentid_id=comp.componentid, assessmentdate=data['assessmentdate'],
+                                        riskanalysisperiod=data['riskperiod'], isequipmentlinked= comp.isequipmentlinked,
+                                        proposalname=data['assessmentname'])
+            rwassessment.save()
+            rwequipment = models.RwEquipment(id=rwassessment, commissiondate=models.EquipmentMaster.objects.get(equipmentid= comp.equipmentid_id).commissiondate,
+                                      adminupsetmanagement=adminControlUpset, containsdeadlegs=containsDeadlegs,
+                                      cyclicoperation=cylicOP, highlydeadleginsp=HighlyEffe,
+                                      downtimeprotectionused=downtime, externalenvironment=data['ExternalEnvironment'],
+                                      heattraced=heatTrace, interfacesoilwater=interfaceSoilWater,
+                                      lineronlinemonitoring=linerOnlineMoniter, materialexposedtoclext=materialExposed,
+                                      minreqtemperaturepressurisation=data['minTemp'],
+                                      onlinemonitoring=data['OnlineMonitoring'], presencesulphideso2=presentSulphide,
+                                      presencesulphideso2shutdown=presentSulphidesShutdown,
+                                      pressurisationcontrolled=pressureControl, pwht=pwht, steamoutwaterflush=steamOut,
+                                      managementfactor= datafaci.managementfactor, thermalhistory=data['ThermalHistory'],
+                                      yearlowestexptemp=lowestTemp, volume=data['EquipmentVolumn'])
+            rwequipment.save()
+            rwcomponent = models.RwComponent(id=rwassessment, nominaldiameter=data['normaldiameter'],
+                                      nominalthickness=data['normalthick'], currentthickness=data['currentthick'],
+                                      minreqthickness=data['tmin'], currentcorrosionrate=data['currentrate'],
+                                      branchdiameter=data['branchDiameter'], branchjointtype=data['joinTypeBranch'],
+                                      brinnelhardness=data['MaxBrinell']
+                                      , deltafatt=data['deltafatt'], chemicalinjection=chemicalInj,
+                                      highlyinjectioninsp=HFICI, complexityprotrusion=data['complex'],
+                                      correctiveaction=data['correctActionMitigate'], crackspresent=crackpresent,
+                                      cyclicloadingwitin15_25m=data['CylicLoad'],
+                                      damagefoundinspection=damageDuringInsp, numberpipefittings=data['numberPipe'],
+                                      pipecondition=data['pipeCondition'],
+                                      previousfailures=data['prevFailure'], shakingamount=data['shakingPipe'],
+                                      shakingdetected=visibleSharkingProtect, shakingtime=data['timeShakingPipe'],
+                                      trampelements=TrampElement)
+            rwcomponent.save()
+            rwstream = models.RwStream(id=rwassessment, aminesolution=data['AminSolution'], aqueousoperation=aquaDuringOP,
+                                aqueousshutdown=aquaDuringShutdown, toxicconstituent=ToxicConstituents,
+                                caustic=environCaustic,
+                                chloride=data['ChlorideIon'], co3concentration=data['CO3'], cyanide=presentCyanide,
+                                exposedtogasamine=exposureAcid, exposedtosulphur=exposedSulfur,
+                                exposuretoamine=data['ExposureAmine'],
+                                h2s=EnvironmentCH2S, h2sinwater=data['H2SContent'], hydrogen=processHydrogen,
+                                hydrofluoric=presentHF, materialexposedtoclint=materialExposedFluid,
+                                maxoperatingpressure=data['maxOP'],
+                                maxoperatingtemperature=float(data['maxOT']), minoperatingpressure=float(data['minOP']),
+                                minoperatingtemperature=data['minOT'], criticalexposuretemperature=data['criticalTemp'],
+                                naohconcentration=data['NaOHConcentration'],
+                                releasefluidpercenttoxic=float(data['ReleasePercentToxic']),
+                                waterph=float(data['PHWater']), h2spartialpressure=float(data['OpHydroPressure']))
+            rwstream.save()
+            rwexcor = models.RwExtcorTemperature(id=rwassessment, minus12tominus8=data['OP1'], minus8toplus6=data['OP2'],
+                                          plus6toplus32=data['OP3'], plus32toplus71=data['OP4'],
+                                          plus71toplus107=data['OP5'],
+                                          plus107toplus121=data['OP6'], plus121toplus135=data['OP7'],
+                                          plus135toplus162=data['OP8'], plus162toplus176=data['OP9'],
+                                          morethanplus176=data['OP10'])
+            rwexcor.save()
+            rwcoat = models.RwCoating(id=rwassessment, externalcoating=ExternalCoating, externalinsulation=ExternalInsulation,
+                               internalcladding=InternalCladding, internalcoating=InternalCoating,
+                               internallining=InternalLining,
+                               externalcoatingdate=data['ExternalCoatingID'],
+                               externalcoatingquality=data['ExternalCoatingQuality'],
+                               externalinsulationtype=data['ExternalInsulationType'],
+                               insulationcondition=data['InsulationCondition'],
+                               insulationcontainschloride=InsulationCholride,
+                               internallinercondition=data['InternalLinerCondition'],
+                               internallinertype=data['InternalLinerType'],
+                               claddingcorrosionrate=data['CladdingCorrosionRate'],
+                               supportconfignotallowcoatingmaint=supportMaterial)
+            rwcoat.save()
+            rwmaterial = models.RwMaterial(id=rwassessment, corrosionallowance=data['CA'], materialname=data['material'],
+                                    designpressure=data['designPressure'], designtemperature=data['maxDesignTemp'],
+                                    mindesigntemperature=data['minDesignTemp'],
+                                    brittlefracturethickness=data['BrittleFacture'], sigmaphase=data['sigmaPhase'],
+                                    sulfurcontent=data['sulfurContent'], heattreatment=data['heatTreatment'],
+                                    referencetemperature=data['tempRef'],
+                                    ptamaterialcode=data['PTAMaterialGrade'],
+                                    hthamaterialcode=data['HTHAMaterialGrade'], ispta=materialPTA, ishtha=materialHTHA,
+                                    austenitic=austeniticStell, temper=suscepTemp, carbonlowalloy=cacbonAlloy,
+                                    nickelbased=nickelAlloy, chromemoreequal12=chromium,
+                                    allowablestress=data['allowStress'], costfactor=data['materialCostFactor'])
+            rwmaterial.save()
+            rwinputca = models.RwInputCaLevel1(id=rwassessment, api_fluid=data['APIFluid'], system=data['Systerm'],
+                                        release_duration=data['ReleaseDuration'], detection_type=data['DetectionType'],
+                                        isulation_type=data['IsulationType'],
+                                        mitigation_system=data['MittigationSysterm'],
+                                        equipment_cost=data['EquipmentCost'], injure_cost=data['InjureCost'],
+                                        evironment_cost=data['EnvironmentCost'], toxic_percent=data['ToxicPercent'],
+                                        personal_density=data['PersonDensity'],
+                                        material_cost=data['materialCostFactor'],
+                                        production_cost=data['ProductionCost'], mass_inventory=data['MassInventory'],
+                                        mass_component=data['MassComponent'],
+                                        stored_pressure=float(data['minOP']) * 6.895, stored_temp=data['minOT'])
+            rwinputca.save()
+            ReCalculate.ReCalculate(rwassessment.id)
+            return redirect('damgeFactor', proposalID=rwassessment.id)
+        
+    except Exception as e:
+        print(e)
+        raise Http404
+    return render(request, 'FacilityUI/proposal/proposalNormalVerify.html',{'page':'newProposal','api':Fluid, 
+                                                                            'componentID':comp.componentid, 'equipmentID':comp.equipmentid_id,
+                                                                            'rwEq':rwequipment,
+                                                                            'rwComp':rwcomponent, 'rwStream':rwstream, 'rwExcot':rwexcor,
+                                                                            'rwCoat':rwcoat, 'rwMaterial':rwmaterial, 'rwInputCa':rwinputca,
+                                                                            'info':request.session,'noti':noti,'countnoti':countnoti,'count':count,'countveri':countveri, 
+                                                                            'proposalname':proposalname, "assess_date":assess_date})
+def list_telemetry_subject(request, componentID):
+    siteid = models.Sites.objects.filter(userID_id=request.session['id'])[0].siteid
+    faci = models.Facility.objects.get(siteid=siteid)
+    countveri = models.Verification.objects.filter(facility=faci.facilityid).filter(Is_active=0).count()
+    noti = models.ZNotification.objects.all().filter(id_user=request.session['id'])
+    countnoti = noti.filter(state=0).count()
+    count = models.Emailto.objects.filter(Q(Emailt=models.ZUser.objects.filter(id=request.session['id'])[0].email),
+                                          Q(Is_see=0)).count()
+    try:
+        data = models.AssessmentName.objects.filter(componentid=componentID)
+        comp = models.ComponentMaster.objects.get(componentid=componentID)
+        equipment = models.EquipmentMaster.objects.get(equipmentnumber=comp.equipmentid)
+        equipmentID=equipment.equipmentid
+        equipment_name = equipment.equipmentname
+        pagiDevices = Paginator(data, 25)
+        pageDevices = request.GET.get('page', 1)
+        try:
+            obj = pagiDevices.page(pageDevices)
+        except PageNotAnInteger:
+            obj = pagiDevices.page(1)
+        except EmptyPage:
+            obj = pageDevices.page(pagiDevices.num_pages)
+    except Exception as e:
+        print(e)
+        raise Http404
+    return render(request, 'FacilityUI/Devices/device_home.html',
+                  {'page': 'listDevices', 'obj': obj, 'componentID': componentID, 'equipmentID': equipmentID,
+                  'equipment_name': equipment_name, 'component_name': comp.componentname,
+                  'siteID': faci.siteid_id, 'faci': faci,
+                   'info': request.session, 'noti': noti, 'countnoti': countnoti, 'count': count,
+                   'countveri': countveri})
+# get data, what will be used to verfy
+def get_telemetry_data(request, proposalname):
+    data = device_collection.find({'assessmentName':proposalname})
+
+    ass_name = models.AssessmentName.objects.get(assessmentname=proposalname)
+    comp = models.ComponentMaster.objects.get(componentid=ass_name.componentid)
+    eqID = (models.EquipmentMaster.objects.get(equipmentnumber=comp.equipmentid)).equipmentid
+    print(ass_name.componentid)
+    if request.method == 'POST':
+        return redirect('verifydata', proposalname)
+    return render(request, 'FacilityUI/Devices/device_show.html', {'obj': data, 'equipmentID':eqID, 'componentID': ass_name.componentid, 'ts':ass_name.timestamp, 'proposalname':proposalname})
 
 def devices(request, facilityID):
     siteid = models.Sites.objects.filter(userID_id=request.session['id'])[0].siteid

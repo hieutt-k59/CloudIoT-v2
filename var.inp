@@ -1,0 +1,158 @@
+    # rw_assessment
+    data["RiskAnalystPeriod"] = RiskAnalystPeriod
+    #end rw_assessment
+
+    # rw_equipment
+    data["ContainsDeadlegs"] = ContainsDeadlegs
+    data["AdminControlUpset"] = AdminControlUpset
+    data["Downtime"] = Downtime
+    data["Highly"] = Highly
+    data["HeatTraced"] = HeatTraced
+    data["LOM"] = LOM
+    data["OnlineMonitoring"] = OnlineMonitoring
+    data["PWHT"] = PWHT
+
+    data["CylicOper"] = CylicOper
+    data["ExternalEnvironment"] = ExternalEnvironment
+    data["InterfaceSoilWater"] = InterfaceSoilWater
+    data["MFTF"] = MFTF
+    data["minTemp"] = minTemp
+    data["PresenceofSulphidesShutdown"] = PresenceofSulphidesShutdown
+    data["PresenceofSulphides"] = PresenceofSulphides
+    data["PressurisationControlled"] = PressurisationControlled
+    data["ThermalHistory"] = ThermalHistory
+    data["SteamedOut"] = SteamedOut
+    data["EquOper"] = EquOper
+    data["EquipmentVolumn"] = EquipmentVolumn
+    # end rw_equipment
+
+    # rw_component
+    data["BranchJointType"] = BranchJointType
+    data["DeltaFATT"] = DeltaFATT
+    data["HFICI"] = HFICI
+    data["CorrectiveAction"] = CorrectiveAction
+    data["NumberPipeFittings"] = NumberPipeFittings
+    data["TrampElements"] = TrampElements
+
+    data["MaxBrinell"] = MaxBrinell
+    data["NorminalDiameter"] = NorminalDiameter
+    data["NorminalThickness"] = NorminalThickness
+    data["CurrentThickness"] = CurrentThickness
+    data["MinReqThickness"] = MinReqThickness
+    data["CurrentCorrosionRate"] = CurrentCorrosionRate
+    data["BranchDiameter"] = BranchDiameter
+    data["ChemicalInjection"] = ChemicalInjection
+    data["complex"] = complex
+    data["PresenceCracks"] = PresenceCracks
+    data["CylicLoad"] = CylicLoad
+    data["DFDI"] = DFDI
+    data["PipeCondition"] = PipeCondition
+    data["PreviousFailures"] = PreviousFailures
+    data["ShakingAmount"] = ShakingAmount
+    data["VASD"] = VASD
+    data["timeShakingPipe"] = timeShakingPipe
+    # end rw_component
+
+    # rw_stream
+    data["AminSolution"] = AminSolution
+    data["AqueOp"] = AqueOp
+    data["CriticalTemp"] = CriticalTemp
+
+    data["AqueShutdown"] = AqueShutdown
+    data["ToxicConstituents"] = ToxicConstituents
+    data["EnvCaustic"] = EnvCaustic
+    data["ChlorideIon"] = ChlorideIon
+    data["CO3"] = CO3
+    data["PresenceCyanides"] = PresenceCyanides
+    data["exposureAcid"] = exposureAcid
+    data["ExposedSulfur"] = ExposedSulfur
+    data["ExposureAmine"] = ExposureAmine
+    data["EnvCH2S"] = EnvCH2S
+    data["H2SInWater"] = H2SInWater
+    data["hydrogen"] = hydrogen
+    data["HydrogenFluoric"] = HydrogenFluoric
+    data["materialExposedFluid"] = materialExposedFluid
+    data["maxOP"] = maxOP
+    data["maxOT"] = maxOT
+    data["minOP"] = minOP
+    data["minOT"] = minOT
+    data["NaOHConcentration"] = NaOHConcentration
+    data["ReleasePercentToxic"] = ReleasePercentToxic
+    data["PHWater"] = PHWater
+    data["OpHydrogenPressure"] = OpHydrogenPressure
+    # end rw_stream
+
+    # rw_excor
+    data["Op1"] = Op1
+    data["Op2"] = Op2
+    data["Op3"] = Op3
+    data["Op4"] = Op4
+    data["Op5"] = Op5
+    data["Op6"] = Op6
+    data["Op7"] = Op7
+    data["Op8"] = Op8
+    data["Op9"] = Op9
+    data["Op10"] = Op10
+    # end rw_excor
+    
+    # rw_coat
+    data["InternalCladding"] = InternalCladding
+    data["InternalCoating"] = InternalCoating
+    data["ExternalCoatingDate"] = ExternalCoatingDate
+    data["ExternalInsulationType"] = ExternalInsulationType
+    data["InsulationCondition"] = InsulationCondition
+    data["InsulationCholride"] = InsulationCholride
+    data["InternalLinerType"] = InternalLinerType
+    data["supportMaterial"] = supportMaterial
+
+    data["ExternalCoating"] = ExternalCoating
+    data["ExternalInsulation"] = ExternalInsulation
+    data["InternalLining"] = InternalLining
+    data["ExternalCoatingQuality"] = ExternalCoatingQuality
+    data["InternalLinerCondition"] = InternalLinerCondition
+    data["CladdingCorrosionRate"] = CladdingCorrosionRate
+    # end rw_coat
+
+    # rw_material
+    data["Material"] = Material
+    data["CorrosionAllowance"] = CorrosionAllowance
+    data["DesignPressure"] = DesignPressure
+    data["MaxDesignTemp"] = MaxDesignTemp
+    data["MinDesignTemp"] = MinDesignTemp
+    data["MaterialHTHA"] = MaterialHTHA
+    data["heatTreatment"] = heatTreatment
+    data["tempRef"] = tempRef
+    data['PTAMaterialGrade'] = PTAMaterialCode
+    data["HTHAMaterialGrade"] = HTHAMaterialGrade
+    data["MaterialPTA"] = MaterialPTA
+    data["AusteniticSteel"] = AusteniticSteel
+    data["CarbonAlloySteel"] = CarbonAlloySteel
+    data["NickelAlloy"] = NickelAlloy
+    data["allowStress"] = allowStress
+    data["MaterialCostFactor"] = CostFactor
+
+    data["BrittleFacture"] = BrittleFacture
+    data["SigmaPhase"] = SigmaPhase
+    data["SulfurContent"] = SulfurContent
+    data["SusceptibleTemper"] = SusceptibleTemper
+    data["Chromium"] = Chromium
+    data["SulphurContent"] = SulphurContent
+    # end rw_material
+
+    # ca
+    data["APIFluid"] = APIFluid
+    data["ReleaseDuration"] = ReleaseDuration
+    data["MitigationSystem"] = MitigationSystem
+    data["EquipmentCost"] = EquipmentCost
+    data["InjureCost"] = InjureCost
+    data["EnvironmentCost"] = EnvironmentCost
+    data["PersonDensity"] = PersonDensity
+    data["ProductionCost"] = ProductionCost
+    data["MassInventory"] = MassInventory
+    data["MassComponent"] = MassComponent
+
+    data["System"] = System
+    data["DetectionType"] = DetectionType
+    data["InsulationType"] = InsulationType
+    data["ToxicPercent"] = ToxicPercent
+    # end ca

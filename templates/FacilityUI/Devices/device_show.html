@@ -1,7 +1,20 @@
-{% extends 'BaseUI/BaseFacility/baseDevice.html' %}
+{% extends 'BaseUI/BaseFacility/baseProposal.html' %}
 {% load staticfiles %}
 {% load static %}
-
+{#{% block listeq %}{% url 'equipmentDisplay' %}{% endblock %}#}
+{#{% block neweq %}{% url 'equipmentNew' facilityID %}{% endblock %}#}
+{% block listProposal %}{% url 'proposalDisplay' componentID %}{% endblock %}
+{% block listPakage %}{% url 'list_telemetry' componentID %}{% endblock %}
+{% block backComp %}{% url 'componentDisplay' equipmentID %}{% endblock %}
+{#{% block devices %}{% url 'devices' %}{% endblock %}#}
+{#{% block neweq %}{% url 'equipmentNew' facilityID %}{% endblock %}#}
+{#{% block backfaci %}{% url 'facilitiesDisplay'  %}{% endblock %}#}
+{#{% block listfaci %}{% url 'facilitiesDisplay' siteID %}{% endblock %}#}
+{#{% block newfaci %}{% url 'facilitiesNew' siteID %}{% endblock %}#}
+{#{% block design %}{% url 'designcodeDisplay' siteID %}{% endblock %}#}
+{#{% block manu %}{% url 'manufactureDisplay' siteID %}{% endblock %}#}
+{#{% block uploadInsp %}{% url 'upload' siteID %}{% endblock %}#}
+{#{% block uploadPlant %}{% url 'uploadPlan' siteID %}{% endblock %}#}
 {% block title %}Data{% endblock %}
 
 {% block data-content %}
@@ -11,25 +24,24 @@
 {#            {% if faci %}<a href="{% url 'equipmentDisplay' faci.facilityid %}">{{ faci.facilityname }}</a>{% endif %}#}
         </div>
         <div style="text-align: center">
-            <caption><b style="font-size: 22px;color: #444444">List of Decives</b></caption>
+            <caption><b style="font-size: 22px;color: #444444">Telemetry of {{proposalname}}</b></caption>
             <br><br>
             <table class="table" id="mytable">
                 <thead>
                     <tr>
-                        <th width="200px" style="text-align: center"><i class="fa fa-tag"></i>&ensp;Type</th>
-                        <th width="200px" style="text-align: center"><i class="fa fa-fax"></i>&ensp;Value</th>
+                        <th width="200px" style="text-align: center"><i class="fa fa-fax"></i>&ensp;Telemetry</th>
                         <th width="200px" style="text-align: center"><i class="fa fa-bar-chart-o"></i>&ensp;Timestamp</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for a in obj %}
                     <tr>
-                        <td style="text-align: center">{{a.type_data}}</td>
-                        <td style="text-align: center">{{a.value}}</td>
-                        <td style="text-align: center">{{a.timestamp}}</td>
+                        <td style="text-align: center">{{a}}</td>
+                        <td style="text-align: center">{{ts}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            <button type="submit" name="verify" class="btn btn-primary"><i class="fa fa-pencil">&emsp;Verify</i></button>
 
 {% endblock %}
